@@ -1,0 +1,13 @@
+node_modules/
+frontend/dist/
+__pycache__/
+*.py[cod]
+.venv/
+backend/uploads/
+backend/data/
+*.db
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
