@@ -11,11 +11,11 @@ The recommended setup runs the Python backend inside **Ubuntu on WSL2**. This av
 3. Open the extracted folder.
 4. Double-click **START_HERE.bat**.
 5. If WSL2/Ubuntu is missing, Windows will install Ubuntu. Restart if Windows asks.
-6. Open **Ubuntu** once from the Windows Start menu. Create a Linux username and password. Password characters do not appear while typing; this is normal.
-7. Double-click **START_HERE.bat** again. It installs Linux dependencies, downloads the latest public project into Ubuntu, and starts the app.
+6. Open Ubuntu once from the Windows Start menu. Create a Linux username and password. Password characters do not appear while typing; this is normal.
+7. Double-click **START_HERE.bat** again. The launcher automatically detects the installed Ubuntu distribution name (including versioned names), installs Linux dependencies, downloads the latest public project into Ubuntu, and starts the app.
 8. The dashboard opens at http://localhost:5173.
 
-The first setup needs an internet connection and may take several minutes. Ubuntu may ask for your Windows password when installing system packages; this is normal. The password is not displayed as you type.
+The first setup needs an internet connection and may take several minutes. Ubuntu may ask for your Linux password when installing system packages; this is normal. The password is not displayed as you type.
 
 ### Daily use
 
@@ -27,7 +27,6 @@ The first setup needs an internet connection and may take several minutes. Ubunt
 ### Troubleshooting
 
 - If Windows asks for a restart during WSL installation, restart, open Ubuntu once, finish its first-time username/password setup, then run `START_HERE.bat` again.
-- If Ubuntu is not listed, run `START_HERE.bat` again and let Windows install it.
 - If setup fails, take a screenshot of the Ubuntu/terminal window and share it.
 - Logs are stored in `~/.ai-short-studio/logs/` inside Ubuntu.
 
