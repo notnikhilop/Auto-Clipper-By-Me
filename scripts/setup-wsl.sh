@@ -62,10 +62,12 @@ cd "$APP_DIR"
 echo "[6/6] Starting local services..."
 pkill -f '[u]vicorn app.main:app' 2>/dev/null || true
 pkill -f '[v]ite --host' 2>/dev/null || true
-nohup backend/.venv/bin/python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 > "$LOG_DIR/backend.log" 2>&1 &
+nohup backend/.venv/bin/python -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 > "$LOG_DIR/backend.log" 2>&1 </dev/null &
 BACKEND_PID=$!
-nohup npm --prefix frontend run dev -- --host 127.0.0.1 --port 5173 --strictPort > "$LOG_DIR/frontend.log" 2>&1 &
+disown "$BACKEND_PID" 2>/dev/null || true
+nohup npm --prefix frontend run dev -- --host 0.0.0.0 --port 5173 --strictPort > "$LOG_DIR/frontend.log" 2>&1 </dev/null &
 FRONTEND_PID=$!
+disown "$FRONTEND_PID" 2>/dev/null || true
 
 sleep 4
 if ! curl -fsS http://127.0.0.1:8000/api/health >/dev/null; then
