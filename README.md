@@ -2,19 +2,34 @@
 
 **AI Short Studio** — a local-first AI video clipping workspace.
 
-## Start here (Windows)
+## Start here (Windows 11)
 
-You do not need to type commands.
+The recommended setup runs the Python backend inside **Ubuntu on WSL2**. This avoids the Windows Code Integrity signing restriction that blocked the local Python extension on some PCs. **Do not disable Smart App Control or Windows security features.**
 
-1. Open the green **Code** button on this GitHub repository.
-2. Choose **Download ZIP** and extract the ZIP file.
+1. Open the green **Code** button on this public GitHub repository.
+2. Choose **Download ZIP** and extract the ZIP.
 3. Open the extracted folder.
 4. Double-click **START_HERE.bat**.
-5. On the first run, the launcher prepares the app, installs its project dependencies, starts the backend and frontend, and opens the dashboard.
+5. If WSL2/Ubuntu is missing, Windows will install Ubuntu. Restart if Windows asks.
+6. Open **Ubuntu** once from the Windows Start menu. Create a Linux username and password. Password characters do not appear while typing; this is normal.
+7. Double-click **START_HERE.bat** again. It installs Linux dependencies, downloads the latest public project into Ubuntu, and starts the app.
+8. The dashboard opens at http://localhost:5173.
 
-You need Python 3.11+ and Node.js LTS installed. If either is missing, the launcher will show the official download page. During Python installation, enable **Add Python to PATH**.
+The first setup needs an internet connection and may take several minutes. Ubuntu may ask for your Windows password when installing system packages; this is normal. The password is not displayed as you type.
 
-Keep the two terminal windows open while using the app. Close them to stop the local app.
+### Daily use
+
+- Double-click **START_HERE.bat** to update and start the app.
+- Double-click **STOP_AI_SHORT_STUDIO.bat** to stop its backend and frontend.
+- Uploaded videos and the SQLite project database are stored inside Ubuntu at `~/AI-Short-Studio/backend/`.
+- Keep Smart App Control enabled. This setup does not change Windows security settings.
+
+### Troubleshooting
+
+- If Windows asks for a restart during WSL installation, restart, open Ubuntu once, finish its first-time username/password setup, then run `START_HERE.bat` again.
+- If Ubuntu is not listed, run `START_HERE.bat` again and let Windows install it.
+- If setup fails, take a screenshot of the Ubuntu/terminal window and share it.
+- Logs are stored in `~/.ai-short-studio/logs/` inside Ubuntu.
 
 ## Current milestone
 
@@ -23,7 +38,7 @@ Keep the two terminal windows open while using the app. Close them to stop the l
 - FastAPI backend
 - Local video upload endpoint
 - SQLite project metadata
-- Windows one-click setup launcher
+- Windows WSL2 one-click starter
 
 ### Planned next
 - AI transcription and highlight detection
@@ -32,28 +47,8 @@ Keep the two terminal windows open while using the app. Close them to stop the l
 - Animated captions and editor
 - MP4 export
 
-## Developer setup (optional)
-
-### Backend
-```bash
-cd backend
-python -m venv .venv
-.venv\\Scripts\\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:5173.
-
 ## Privacy and costs
 
-Uploaded videos are stored on the computer running the backend. This is a local development app; do not expose its server to the public internet. Optional cloud AI services, hosting, and storage may have separate costs. API secrets must stay on the backend, never in frontend code.
+Uploaded videos are stored locally inside the Ubuntu environment on this computer. This is a local development app; do not expose its server to the public internet. Optional cloud AI services, hosting, and storage may have separate costs. API secrets must stay on the backend, never in frontend code.
 
 No license has been selected yet.
