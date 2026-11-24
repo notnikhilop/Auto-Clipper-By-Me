@@ -1,69 +1,69 @@
 @echo off
-title AI Short Studio - Setup
+title AI Short Studio - WSL2 Setup
 setlocal
 cd /d "%~dp0"
 
 echo.
 echo ==============================================
-echo          AI SHORT STUDIO - FIRST RUN
+echo       AI SHORT STUDIO - WSL2 STARTER
 echo ==============================================
 echo.
-where py >nul 2>nul
-if errorlevel 1 (
-  echo Python was not found on this computer.
-  echo Install Python 3.11 or newer from:
-  echo https://www.python.org/downloads/windows/
-  echo IMPORTANT: tick "Add Python to PATH" during installation.
-  echo Then double-click START_HERE.bat again.
-  pause
-  exit /b 1
-)
-where node >nul 2>nul
-if errorlevel 1 (
-  echo Node.js was not found on this computer.
-  echo Install the LTS version from:
-  echo https://nodejs.org/
-  echo Then restart this window and double-click START_HERE.bat again.
-  pause
-  exit /b 1
-)
-where npm >nul 2>nul
-if errorlevel 1 (
-  echo npm was not found. Reinstall Node.js LTS from https://nodejs.org/
+echo This setup keeps Windows Smart App Control enabled.
+echo The Python backend will run inside Ubuntu on WSL2.
+echo.
+
+where wsl.exe >nul 2>nul
+if errorlevel 1 goto install_wsl
+
+wsl.exe --list --quiet 2>nul | findstr /i "Ubuntu" >nul
+if errorlevel 1 goto install_ubuntu
+
+echo [1/2] Finding the setup script...
+set "WSL_SCRIPT="
+for /f "delims=" %%I in ('wsl.exe -d Ubuntu -- wslpath -a "%~dp0scripts\setup-wsl.sh"') do set "WSL_SCRIPT=%%I"
+if not defined WSL_SCRIPT (
+  echo Could not locate the setup script inside Ubuntu.
+  echo Make sure this ZIP was fully extracted, then try again.
   pause
   exit /b 1
 )
 
-echo [1/4] Preparing Python environment...
-if not exist "backend\.venv\Scripts\python.exe" py -3 -m venv "backend\.venv"
-if errorlevel 1 goto failed
+echo [2/2] Preparing and starting AI Short Studio in Ubuntu...
+wsl.exe -d Ubuntu -- bash "%WSL_SCRIPT%"
+if errorlevel 1 (
+  echo.
+  echo Setup did not finish. Take a screenshot and send it in ChatGPT.
+  pause
+  exit /b 1
+)
 
-echo [2/4] Installing backend requirements...
-"backend\.venv\Scripts\python.exe" -m pip install --upgrade pip
-if errorlevel 1 goto failed
-"backend\.venv\Scripts\python.exe" -m pip install -r "backend\requirements.txt"
-if errorlevel 1 goto failed
-
-echo [3/4] Installing frontend packages...
-cd /d "%~dp0frontend"
-call npm install
-if errorlevel 1 goto failed
-
-echo [4/4] Starting AI Short Studio...
-start "AI Short Studio Backend" cmd /k "cd /d ""%~dp0backend"" && ""%~dp0backend\.venv\Scripts\python.exe"" -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
-timeout /t 3 /nobreak >nul
-start "AI Short Studio Frontend" cmd /k "cd /d ""%~dp0frontend"" && npm run dev"
-timeout /t 5 /nobreak >nul
+echo.
+echo Opening AI Short Studio...
 start "" "http://localhost:5173"
 echo.
-echo AI Short Studio is starting in your browser.
-echo Keep both terminal windows open while using the app.
-echo To stop the app, close those two terminal windows.
+echo AI Short Studio is running inside Ubuntu (WSL2).
+echo To stop it, double-click STOP_AI_SHORT_STUDIO.bat.
 pause
 exit /b 0
 
-:failed
+:install_wsl
+echo Windows Subsystem for Linux is not installed yet.
+echo Windows may ask for administrator approval and a restart.
+wsl.exe --install -d Ubuntu
 echo.
-echo Setup could not finish. Take a screenshot of this window and send it in ChatGPT.
+echo If Windows asks you to restart, restart the PC.
+echo Then open Ubuntu once from the Start menu, create a Linux username
+echo and password, and double-click START_HERE.bat again.
 pause
-exit /b 1
+exit /b 0
+
+:install_ubuntu
+echo Ubuntu is not installed in WSL yet.
+echo Starting the official Ubuntu installation...
+wsl.exe --install -d Ubuntu
+echo.
+echo When installation finishes, open Ubuntu from the Start menu.
+echo Create a Linux username and password (password typing is invisible).
+echo Then double-click START_HERE.bat again.
+pause
+exit /b 0
