@@ -15,12 +15,15 @@ echo.
 where wsl.exe >nul 2>nul
 if errorlevel 1 goto install_wsl
 
-wsl.exe --list --quiet 2>nul | findstr /i "Ubuntu" >nul
-if errorlevel 1 goto install_ubuntu
+set "WSL_DISTRO="
+for /f "usebackq delims=" %%I in (`powershell -NoProfile -Command "$d = wsl.exe --list --quiet 2>$null; $d = $d -replace [char]0,''; $d | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^Ubuntu' } | Select-Object -First 1"`) do set "WSL_DISTRO=%%I"
 
+if not defined WSL_DISTRO goto install_ubuntu
+
+echo Detected Ubuntu distribution: %WSL_DISTRO%
 echo [1/2] Finding the setup script...
 set "WSL_SCRIPT="
-for /f "delims=" %%I in ('wsl.exe -d Ubuntu -- wslpath -a "%~dp0scripts\setup-wsl.sh"') do set "WSL_SCRIPT=%%I"
+for /f "delims=" %%I in ('wsl.exe -d "%WSL_DISTRO%" -- wslpath -a "%~dp0scripts\setup-wsl.sh"') do set "WSL_SCRIPT=%%I"
 if not defined WSL_SCRIPT (
   echo Could not locate the setup script inside Ubuntu.
   echo Make sure this ZIP was fully extracted, then try again.
@@ -29,7 +32,7 @@ if not defined WSL_SCRIPT (
 )
 
 echo [2/2] Preparing and starting AI Short Studio in Ubuntu...
-wsl.exe -d Ubuntu -- bash "%WSL_SCRIPT%"
+wsl.exe -d "%WSL_DISTRO%" -- bash "%WSL_SCRIPT%"
 if errorlevel 1 (
   echo.
   echo Setup did not finish. Take a screenshot and send it in ChatGPT.
@@ -42,7 +45,7 @@ echo Opening AI Short Studio...
 start "" "http://localhost:5173"
 echo.
 echo AI Short Studio is running inside Ubuntu (WSL2).
-echo To stop it, double-click STOP_AI_SHORT_STUDIO.bat.
+echo To stop the app, double-click STOP_AI_SHORT_STUDIO.bat.
 pause
 exit /b 0
 
@@ -58,7 +61,7 @@ pause
 exit /b 0
 
 :install_ubuntu
-echo Ubuntu is not installed in WSL yet.
+echo No Ubuntu distribution was detected in WSL.
 echo Starting the official Ubuntu installation...
 powershell -NoProfile -Command "$p=Start-Process -FilePath 'wsl.exe' -ArgumentList '--install -d Ubuntu' -Verb RunAs -Wait -PassThru; exit $p.ExitCode"
 echo.
