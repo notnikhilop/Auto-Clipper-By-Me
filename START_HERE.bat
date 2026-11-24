@@ -49,7 +49,7 @@ exit /b 0
 :install_wsl
 echo Windows Subsystem for Linux is not installed yet.
 echo Windows may ask for administrator approval and a restart.
-wsl.exe --install -d Ubuntu
+powershell -NoProfile -Command "$p=Start-Process -FilePath 'wsl.exe' -ArgumentList '--install -d Ubuntu' -Verb RunAs -Wait -PassThru; exit $p.ExitCode"
 echo.
 echo If Windows asks you to restart, restart the PC.
 echo Then open Ubuntu once from the Start menu, create a Linux username
@@ -60,7 +60,7 @@ exit /b 0
 :install_ubuntu
 echo Ubuntu is not installed in WSL yet.
 echo Starting the official Ubuntu installation...
-wsl.exe --install -d Ubuntu
+powershell -NoProfile -Command "$p=Start-Process -FilePath 'wsl.exe' -ArgumentList '--install -d Ubuntu' -Verb RunAs -Wait -PassThru; exit $p.ExitCode"
 echo.
 echo When installation finishes, open Ubuntu from the Start menu.
 echo Create a Linux username and password (password typing is invisible).
